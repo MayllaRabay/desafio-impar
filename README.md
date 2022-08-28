@@ -24,7 +24,7 @@
 
 ```bash
 # Abra seu terminal/cmd e clone este repositório
-$ git clone https://github.com/MayllaRabay/desafio-impar
+$ git clone https://github.com/MayllaRabay/desafio-impar.git
 
 # Acesse a pasta do projeto
 $ cd desafio-impar
