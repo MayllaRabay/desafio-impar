@@ -1,0 +1,10 @@
+@import '../../app/presentation/styles/colors.scss';
+@import '../../app/presentation/styles/global.scss';
+
+.cardContainer {
+  border: 1px solid $grayL;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
