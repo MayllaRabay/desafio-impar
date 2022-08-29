@@ -1,0 +1,23 @@
+@import '../../styles/colors.module.scss';
+
+header {
+  background-color: $yellowM;
+  box-shadow: 0px 4px 8px rgba(26, 21, 40, 0.08), 0px 8px 16px rgba(26, 21, 40, 0.08),
+    0px 16px 24px rgba(26, 21, 40, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  width: 100%;
+  position: sticky;
+  .headerIcon {
+    height: 3rem;
+    width: 3rem;
+    img {
+      max-height: 3rem;
+      max-width: 3rem;
+    }
+  }
+  .headerTitle {
+  }
+}

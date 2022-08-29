@@ -1,0 +1,41 @@
+@import '../../../../../styles/colors.module.scss';
+
+.cardContainer {
+  border: 1px solid $grayL;
+  border-radius: 0.5rem;
+  box-shadow: 0px 4px 8px rgba(26, 21, 40, 0.08), 0px 8px 16px rgba(26, 21, 40, 0.08),
+    0px 16px 24px rgba(26, 21, 40, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  .cardId {
+    color: $grayL;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: -1rem;
+    width: 100%;
+  }
+  .cardImage {
+    background-color: $grayXL;
+    border: 1px solid $grayL;
+    border-radius: 50%;
+    height: 8rem;
+    width: 8rem;
+    img {
+      max-height: 8rem;
+      max-width: 8rem;
+    }
+  }
+  .cardTitle {
+    border-top: 1px solid $grayL;
+    padding-top: 0.25rem;
+    width: 100%;
+  }
+  .cardInfo {
+    display: flex;
+    gap: 0.5rem;
+  }
+}

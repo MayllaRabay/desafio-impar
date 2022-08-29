@@ -1,0 +1,28 @@
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  .searchContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    position: relative;
+    height: 8rem;
+    width: 100%;
+    > img {
+      object-fit: cover;
+      object-position: bottom;
+      height: 8rem;
+      width: 100%;
+      position: absolute;
+      top: 0;
+    }
+  }
+  .cardWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 2rem;
+  }
+}

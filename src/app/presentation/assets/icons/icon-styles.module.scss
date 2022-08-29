@@ -1,0 +1,9 @@
+.iconCloseContainer {
+  display: flex;
+  &[data-style='hasClick'] {
+    cursor: pointer;
+    > svg {
+      cursor: pointer;
+    }
+  }
+}

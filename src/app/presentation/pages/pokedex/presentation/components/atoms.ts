@@ -1,7 +1,7 @@
 import { atom } from 'recoil'
 
 export const pokedexState = atom({
-  key: 'pokedexState',
+  key: 'pokedexStateKey',
   default: {
     mainError: undefined,
     isLoading: false,

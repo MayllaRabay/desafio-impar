@@ -1,0 +1,30 @@
+$white: #fcfcfd;
+
+$grayXD: #3a3a3a;
+$grayD: #505050;
+$grayM: #747474;
+$grayL: #c7c7c7;
+$grayXL: #e4e4e4;
+
+$purpleM: #6c57a8;
+
+$greenM: #4fb43f;
+
+$yellowM: #f9dc45;
+$yellowL: rgba(255, 236, 137, 1);
+
+$blueM: #046daf;
+
+:export {
+  white: $white;
+  grayXD: $grayXD;
+  grayD: $grayD;
+  grayM: $grayM;
+  grayL: $grayL;
+  grayXL: $grayXL;
+  purpleM: $purpleM;
+  greenM: $greenM;
+  yellowM: $yellowM;
+  yellowL: $yellowL;
+  blueM: $blueM;
+}
