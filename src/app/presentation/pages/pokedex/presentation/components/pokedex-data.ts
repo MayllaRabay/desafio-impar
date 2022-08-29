@@ -1,4 +1,4 @@
-import { PokemonModel } from '../../../../../domain/models'
+import { PokemonModel } from 'app/domain/models'
 
 export const pokemonListMock: Array<PokemonModel> = [
   {

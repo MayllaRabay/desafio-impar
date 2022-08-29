@@ -1,5 +1,5 @@
+import { Colors } from 'app/presentation/styles'
 import React from 'react'
-import { Colors } from '../../../../../styles'
 import Styles from './pokemon-type-styles.module.scss'
 
 export interface Props {

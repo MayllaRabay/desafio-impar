@@ -1,6 +1,6 @@
+import { PokemonModel } from 'app/domain/models'
+import { PokemonType } from 'app/presentation/pages/pokedex/presentation/components'
 import React from 'react'
-import { PokemonType } from '..'
-import { PokemonModel } from '../../../../../../domain/models'
 import Styles from './pokemon-card-styles.module.scss'
 
 interface Props {

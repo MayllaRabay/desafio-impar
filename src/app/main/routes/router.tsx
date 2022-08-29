@@ -1,7 +1,7 @@
+import { Error404, Pokedex } from 'app/presentation/pages'
 import React from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
-import { Error404, Pokedex } from '../../presentation/pages'
 
 const Router: React.FC = () => {
   return (

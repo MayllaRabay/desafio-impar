@@ -1,12 +1,25 @@
+import { BackgroundPokemon, ThumbHeader } from 'app/presentation/assets'
+import { Header, InputSearch, Loading } from 'app/presentation/components'
 import React, { useEffect } from 'react'
 import { useRecoilState } from 'recoil'
-import { BackgroundPokemon, ThumbHeader } from '../../../../presentation/assets'
-import { Header, InputSearch } from '../../../components'
 import { NoSearchResults, pokedexState, PokemonCard, pokemonListMock } from './components'
 import Styles from './pokedex-styles.module.scss'
 
 const Pokedex: React.FC = () => {
   const [state, setState] = useRecoilState(pokedexState)
+
+  const loadPokemons = async () => {
+    try {
+      setState(old => ({ ...old, isLoading: true }))
+      const response = await fetch('https://pokeapi.co/api/v2/pokemon')
+
+      console.log('response', response)
+    } catch (error) {
+      console.log(error.message)
+    } finally {
+      setState(old => ({ ...old, isLoading: true }))
+    }
+  }
 
   useEffect(() => {
     if (state.search === '') return setState(old => ({ ...old, searchList: [] }))
@@ -44,7 +57,11 @@ const Pokedex: React.FC = () => {
           <img src={BackgroundPokemon} alt="" />
         </div>
         <div className={Styles.cardWrapper}>
-          {state.search && state.searchList.length === 0 ? (
+          {state.isLoading ? (
+            <>
+              <Loading />
+            </>
+          ) : state.search && state.searchList.length === 0 ? (
             <>
               <NoSearchResults />
             </>
