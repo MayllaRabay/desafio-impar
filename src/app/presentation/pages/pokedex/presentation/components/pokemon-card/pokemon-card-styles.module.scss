@@ -11,12 +11,24 @@
   justify-content: center;
   gap: 1rem;
   padding: 1rem;
+  transition: all 0.5s;
+  &:hover {
+    border-color: $grayM;
+    .cardId {
+      color: $grayM;
+    }
+    .cardImage {
+      background-color: $grayL;
+      border-color: $grayM;
+    }
+  }
   .cardId {
     color: $grayL;
     display: flex;
     justify-content: flex-end;
     margin-bottom: -1rem;
     width: 100%;
+    transition: all 0.5s;
   }
   .cardImage {
     background-color: $grayXL;
@@ -24,6 +36,7 @@
     border-radius: 50%;
     height: 8rem;
     width: 8rem;
+    transition: all 0.5s;
     img {
       max-height: 8rem;
       max-width: 8rem;
