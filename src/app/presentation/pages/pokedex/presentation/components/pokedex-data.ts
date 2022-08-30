@@ -4,60 +4,72 @@ export const pokemonListMock: Array<PokemonModel> = [
   {
     id: 1,
     name: 'bulbasaur',
-    sprite: {
+    sprites: {
       other: {
-        officialArtwork: {
-          frontDefault:
+        dream_world: {
+          front_default:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png'
         }
       }
     },
     types: [
       {
-        name: 'grass'
+        type: {
+          name: 'grass'
+        }
       },
       {
-        name: 'poison'
+        type: {
+          name: 'poison'
+        }
       }
     ]
   },
   {
     id: 2,
     name: 'ivysaur',
-    sprite: {
+    sprites: {
       other: {
-        officialArtwork: {
-          frontDefault:
+        dream_world: {
+          front_default:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png'
         }
       }
     },
     types: [
       {
-        name: 'grass'
+        type: {
+          name: 'grass'
+        }
       },
       {
-        name: 'poison'
+        type: {
+          name: 'poison'
+        }
       }
     ]
   },
   {
     id: 3,
     name: 'venusaur',
-    sprite: {
+    sprites: {
       other: {
-        officialArtwork: {
-          frontDefault:
+        dream_world: {
+          front_default:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png'
         }
       }
     },
     types: [
       {
-        name: 'grass'
+        type: {
+          name: 'grass'
+        }
       },
       {
-        name: 'poison'
+        type: {
+          name: 'poison'
+        }
       }
     ]
   }

@@ -13,6 +13,7 @@
   padding: 1rem;
   transition: all 0.5s;
   height: fit-content;
+  width: 12rem;
   &:hover {
     border-color: $grayM;
     .cardId {
@@ -35,6 +36,8 @@
     background-color: $grayXL;
     border: 1px solid $grayL;
     border-radius: 50%;
+    display: flex;
+    justify-content: center;
     height: 8rem;
     width: 8rem;
     transition: all 0.5s;

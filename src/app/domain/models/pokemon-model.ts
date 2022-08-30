@@ -1,12 +1,12 @@
 export interface PokemonModel {
   id: number
   name: string
-  sprite: {
+  sprites: {
     other: {
-      officialArtwork: {
-        frontDefault: string
+      dream_world: {
+        front_default: string
       }
     }
   }
-  types: Array<object>
+  types: Array<{ type: { name: string } }>
 }

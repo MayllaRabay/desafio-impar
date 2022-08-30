@@ -8,19 +8,19 @@ interface Props {
 }
 
 const PokemonCard: React.FC<Props> = ({ pokemon }) => {
-  const pokemonSprite = pokemon.sprite.other.officialArtwork.frontDefault
+  const pokemonSprite = pokemon?.sprites?.other?.dream_world?.front_default
   return (
     <div className={Styles.cardContainer}>
-      <div className={Styles.cardId}>{`#${pokemon.id}`}</div>
+      <div className={Styles.cardId}>{`#${pokemon?.id}`}</div>
       <div className={Styles.cardImage}>
-        <img src={pokemonSprite} alt={`Imagem de ${pokemon.name}`} />
+        <img src={pokemonSprite} alt={`Imagem de ${pokemon?.name}`} />
       </div>
       <div className={Styles.cardTitle}>
-        {pokemon.name[0].toUpperCase() + pokemon.name.slice(1).toLowerCase()}
+        {pokemon?.name[0]?.toUpperCase() + pokemon?.name?.slice(1).toLowerCase()}
       </div>
       <div className={Styles.cardInfo}>
-        {pokemon.types.map((type, index) => {
-          return <PokemonType key={index} type={type} />
+        {pokemon?.types?.map((type, index) => {
+          return <PokemonType key={index} type={type?.type} />
         })}
       </div>
     </div>

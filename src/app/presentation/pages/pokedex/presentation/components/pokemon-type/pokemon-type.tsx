@@ -8,10 +8,10 @@ export interface Props {
 
 const PokemonType: React.FC<Props> = ({ type }) => {
   const color =
-    type.name === 'poison' ? Colors.purpleM : type.name === 'grass' ? Colors.greenM : Colors.grayM
+    type?.name === 'poison' ? Colors.purpleM : type?.name === 'grass' ? Colors.greenM : Colors.grayM
   return (
     <div style={{ borderColor: color, color: color }} className={Styles.cardType}>
-      {type.name}
+      {type?.name}
     </div>
   )
 }
