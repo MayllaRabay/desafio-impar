@@ -42,9 +42,9 @@ const Pokedex: React.FC = () => {
   }, [])
 
   return (
-    <>
+    <div className={Styles.mainContainer}>
       <Header title="Pokédex" icon={ThumbHeader} />
-      <div className={Styles.mainContainer}>
+      <div className={Styles.contentContainer}>
         <div className={Styles.searchContainer}>
           <InputSearch
             name="search"
@@ -76,7 +76,7 @@ const Pokedex: React.FC = () => {
           )}
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

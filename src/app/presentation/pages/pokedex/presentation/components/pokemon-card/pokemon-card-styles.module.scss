@@ -12,6 +12,7 @@
   gap: 1rem;
   padding: 1rem;
   transition: all 0.5s;
+  height: fit-content;
   &:hover {
     border-color: $grayM;
     .cardId {
