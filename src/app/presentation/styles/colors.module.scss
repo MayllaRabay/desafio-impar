@@ -6,25 +6,52 @@ $grayM: #747474;
 $grayL: #c7c7c7;
 $grayXL: #e4e4e4;
 
+$purpleXD: #352661;
+$purpleD: #4c3a82;
 $purpleM: #6c57a8;
 
 $greenM: #4fb43f;
+$greenL: #89e266;
 
+$yellowD: #ad9622;
 $yellowM: #f9dc45;
 $yellowL: rgba(255, 236, 137, 1);
 
+$redD: #c92437;
+$redM: #e82f45;
+$redL: #f38e9a;
+$redXL: #fae6e8;
+
 $blueM: #046daf;
+$blueL: #008ecf;
+$blueXL: #2eb7f7;
 
 :export {
   white: $white;
+
   grayXD: $grayXD;
   grayD: $grayD;
   grayM: $grayM;
   grayL: $grayL;
   grayXL: $grayXL;
+
+  purpleXD: $purpleXD;
+  purpleD: $purpleD;
   purpleM: $purpleM;
+
   greenM: $greenM;
+  greenL: $greenL;
+
+  yellowD: $yellowD;
   yellowM: $yellowM;
   yellowL: $yellowL;
+
+  redD: $redD;
+  redM: $redM;
+  redL: $redL;
+  redXL: $redXL;
+
   blueM: $blueM;
+  blueL: $blueL;
+  blueXL: $blueXL;
 }
