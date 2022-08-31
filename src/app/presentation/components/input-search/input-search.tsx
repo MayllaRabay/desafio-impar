@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { IconClose, IconSearch } from 'app/presentation/assets'
-import React, { useRef } from 'react'
-import Styles from './input-search-styles.module.scss'
+import { IconClose, IconSearch } from "app/presentation/assets"
+import React, { useRef } from "react"
+import Styles from "./input-search-styles.module.scss"
 
 type Props = React.DetailedHTMLProps<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -22,7 +22,7 @@ const InputSearch: React.FC<Props> = ({ state, setState, placeholder, width, ...
 
   const handleClearSelection = (): void => {
     if (state[props.name]) {
-      setState({ ...state, [props.name]: '' })
+      setState({ ...state, [props.name]: "" })
     }
   }
 
@@ -43,6 +43,7 @@ const InputSearch: React.FC<Props> = ({ state, setState, placeholder, width, ...
         placeholder={placeholder}
         onFocus={e => handleOnFocus(e)}
         onChange={e => handleOnChange(e)}
+        onKeyUp={e => handleOnChange(e)}
         autoComplete="off"
       />
       <span onClick={handleClearSelection} className={Styles.inputIcon}>

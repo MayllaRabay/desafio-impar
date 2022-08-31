@@ -1,15 +1,11 @@
-import { Arrow, BackgroundPokemon, ThumbHeader } from 'app/presentation/assets'
-import { Header, InputSearch, Loading } from 'app/presentation/components'
-import React, { useEffect } from 'react'
-import { useRecoilState, useResetRecoilState } from 'recoil'
-import { NoSearchResults, pokedexState, PokemonCard } from './components'
-import Styles from './pokedex-styles.module.scss'
-
-export enum LocalStorageKey {
-  PageOne = 0,
-  PageTwo = 20,
-  PageThree = 40
-}
+import { PokeApiBaseUrl, PokeApiConfig } from "app/domain/usecases"
+import { Arrow, BackgroundPokemon, ThumbHeader } from "app/presentation/assets"
+import { Header, InputSearch, Loading } from "app/presentation/components"
+import debounce from "lodash.debounce"
+import React, { useEffect, useMemo } from "react"
+import { useRecoilState, useResetRecoilState } from "recoil"
+import { NoSearchResults, pokedexState, PokemonCard } from "./components"
+import Styles from "./pokedex-styles.module.scss"
 
 const Pokedex: React.FC = () => {
   const [state, setState] = useRecoilState(pokedexState)
@@ -19,20 +15,14 @@ const Pokedex: React.FC = () => {
     try {
       setState(old => ({ ...old, isLoading: true }))
       const requestPokemons = await fetch(
-        `https://pokeapi.co/api/v2/pokemon?offset=${pageOffset}&limit=20`,
-        {
-          method: 'GET',
-          mode: 'cors',
-          headers: {
-            'Content-type': 'application/json'
-          }
-        }
+        `${PokeApiBaseUrl}pokemon/?offset=${pageOffset}&limit=20`,
+        PokeApiConfig
       )
       const responsePokemons = await requestPokemons.json()
 
       const pokemons = []
-      responsePokemons.results.forEach(item => {
-        pokemons.push(item.url)
+      responsePokemons.results.forEach(pkmon => {
+        pokemons.push(pkmon.url)
       })
 
       const requestPokemonsData = await Promise.all(pokemons.map(pkmon => fetch(pkmon)))
@@ -60,7 +50,64 @@ const Pokedex: React.FC = () => {
       console.log(error.message)
     } finally {
       setState(old => ({ ...old, isLoading: false }))
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+  }
+
+  const handleSearchPokemons = async (search: string) => {
+    try {
+      setState(old => ({ ...old, isLoading: true, searchList: [] }))
+      let pokemons
+      if (!state.allPokemons) {
+        const request = await fetch(`${PokeApiBaseUrl}pokemon/?offset=0&limit=1`, PokeApiConfig)
+        const response = await request.json()
+        const pokemonCount: number = response.count
+        const requestSearchedPokemons = await fetch(
+          `${PokeApiBaseUrl}pokemon/?offset=0&limit=${pokemonCount}`,
+          PokeApiConfig
+        )
+        pokemons = await requestSearchedPokemons.json()
+        setState(old => ({ ...old, allPokemons: pokemons }))
+      } else {
+        pokemons = state.allPokemons
+      }
+
+      const searchedPokemons = []
+      pokemons.results.forEach(pkmon => {
+        if (pkmon.name?.toLowerCase().includes(search?.toLowerCase())) {
+          searchedPokemons.push(pkmon.url)
+        }
+      })
+
+      if (searchedPokemons.length > 20) {
+        console.log("searchedPokemons muito grande: ", searchedPokemons)
+      } else {
+        const requestPokemonsData = await Promise.all(searchedPokemons.map(pkmon => fetch(pkmon)))
+        const responsePokemonsData = await Promise.all(
+          requestPokemonsData.map(pkmon => pkmon.json())
+        )
+        const finalPokemonList = []
+        responsePokemonsData.forEach(pkmon => {
+          finalPokemonList.push({
+            id: pkmon.id,
+            name: pkmon.name,
+            sprite:
+              pkmon.sprites.other.dream_world.front_default ??
+              pkmon.sprites.other["official-artwork"].front_default ??
+              pkmon.sprites.other.home.front_default,
+            types: pkmon.types
+          })
+        })
+        setState(old => ({
+          ...old,
+          searchList: finalPokemonList
+        }))
+      }
+    } catch (error) {
+      //TODO: fazer tratamento de erro de internet e erro inesperado
+      console.log(error.message)
+    } finally {
+      setState(old => ({ ...old, isLoading: false }))
     }
   }
 
@@ -96,29 +143,26 @@ const Pokedex: React.FC = () => {
 
     const pokemons = JSON.parse(localStorage.getItem(`pokemons${pageOffset}`))
     if (pokemons) {
-      console.log('usando o localStorage')
       setState(old => ({
         ...old,
         pokemonList: pokemons,
         pageOffset
       }))
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, behavior: "smooth" })
     } else {
       loadPokemons(pageOffset)
     }
   }
 
-  useEffect(() => {
-    if (state.search === '') return setState(old => ({ ...old, searchList: [] }))
+  const handleSearchWithDebounce = useMemo(() => {
+    return debounce((search: string) => handleSearchPokemons(search), 1000)
+  }, [])
 
-    setState(old => ({ ...old, searchList: [] }))
-    const searchedItems = []
-    state.pokemonList.forEach(pokemon => {
-      if (pokemon?.name?.toLowerCase().includes(state.search.toLowerCase())) {
-        searchedItems.push(pokemon)
-      }
-    })
-    setState(old => ({ ...old, searchList: searchedItems }))
+  useEffect(() => {
+    if (state.search === "") return setState(old => ({ ...old, searchList: [] }))
+    if (state.search.length <= 3) return
+    setState(old => ({ ...old, isLoading: true, searchList: [] }))
+    handleSearchWithDebounce(state.search)
   }, [state.search])
 
   useEffect(() => {
@@ -154,12 +198,13 @@ const Pokedex: React.FC = () => {
           <img src={BackgroundPokemon} alt="" />
         </div>
         <div className={Styles.cardContainer}>
+          {state.search && state.searchList.length > 0 && <h4>Resultado da busca</h4>}
           <div className={Styles.cardWrapper}>
             {state.isLoading ? (
               <>
                 <Loading />
               </>
-            ) : state.search && state.searchList.length === 0 ? (
+            ) : state.search.length > 3 && state.searchList.length === 0 ? (
               <>
                 <NoSearchResults />
               </>
@@ -189,20 +234,20 @@ const Pokedex: React.FC = () => {
               <div className={Styles.emptyPageButton} />
             )}
             <div className={Styles.allPageButtons}>
-              {state.pages[0] !== 1 && '...'}
+              {state.pages[0] !== 1 && "..."}
               {state.pages?.map(page => {
                 return (
                   <span
                     key={page}
                     className={Styles.pageButton}
                     onClick={() => handleSelectPage(page)}
-                    data-style={page === state.pageActive && 'pageActive'}
+                    data-style={page === state.pageActive && "pageActive"}
                   >
                     {page}
                   </span>
                 )
               })}
-              {state.haveNextPage && '...'}
+              {state.haveNextPage && "..."}
             </div>
             {state.haveNextPage ? (
               <div className={Styles.nextPageButton} onClick={handleNextPage}>

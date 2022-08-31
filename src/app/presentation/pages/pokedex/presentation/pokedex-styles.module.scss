@@ -1,4 +1,5 @@
-@import 'app/presentation/styles/colors.module.scss';
+@import "app/presentation/styles/colors.module.scss";
+@import "app/presentation/styles/global-styles.module.scss";
 
 .mainContainer {
   display: flex;
@@ -31,7 +32,8 @@
     }
     .cardContainer {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
       gap: 1.5rem;
       padding: 2rem;
@@ -90,7 +92,7 @@
         span {
           border-right: 1px solid $grayD;
           padding-right: 0.5rem;
-          &[data-style='pageActive'] {
+          &[data-style="pageActive"] {
             color: $redD;
             font-weight: bold;
           }
@@ -110,6 +112,37 @@
       &:hover {
         color: $redM;
         cursor: pointer;
+      }
+    }
+  }
+}
+
+@media (max-width: $md) {
+  .mainContainer {
+    .contentContainer {
+      .searchContainer {
+        padding: 0 2rem;
+      }
+      .cardContainer {
+        gap: 0.5rem;
+        padding: 2rem 1rem;
+      }
+    }
+  }
+}
+
+@media (max-width: $sm) {
+  .mainContainer {
+    footer {
+      .footerMainButtons {
+        flex-direction: column;
+        width: fit-content;
+        .previousPageButton {
+          align-self: flex-start;
+        }
+        .nextPageButton {
+          align-self: flex-end;
+        }
       }
     }
   }

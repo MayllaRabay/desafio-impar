@@ -1,4 +1,4 @@
-@import 'app/presentation/styles/colors.module.scss';
+@import "app/presentation/styles/colors.module.scss";
 
 * {
   margin: 0;
@@ -15,3 +15,6 @@ p,
 span {
   color: $grayD;
 }
+
+$sm: 480px;
+$md: 768px;

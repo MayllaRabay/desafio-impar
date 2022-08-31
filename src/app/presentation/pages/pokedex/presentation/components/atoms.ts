@@ -1,14 +1,16 @@
-import { atom } from 'recoil'
+import { atom } from "recoil"
 
 export const pokedexState = atom({
-  key: 'pokedexStateKey',
+  key: "pokedexStateKey",
   default: {
     mainError: undefined,
     isLoading: false,
 
+    allPokemons: undefined,
     pokemonList: [],
+    pokemonCount: 0,
 
-    search: '',
+    search: "",
     searchList: [],
 
     pageOffset: 0,
