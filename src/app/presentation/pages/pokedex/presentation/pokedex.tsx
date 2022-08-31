@@ -27,15 +27,23 @@ const Pokedex: React.FC = () => {
 
       const requestPokemonsData = await Promise.all(pokemons.map(pkmon => fetch(pkmon)))
       const responsePokemonsData = await Promise.all(requestPokemonsData.map(pkmon => pkmon.json()))
-      console.log('responsePokemonsData', responsePokemonsData)
-      // const requestOnePokemon = await fetch(pokemons[15])
-      // const onePokemon = await requestOnePokemon.json()
 
+      const finalPokemonList = []
+      responsePokemonsData.forEach(pkmon => {
+        finalPokemonList.push({
+          id: pkmon.id,
+          name: pkmon.name,
+          sprite: pkmon.sprites.other.dream_world.front_default,
+          types: pkmon.types
+        })
+      })
       setState(old => ({
         ...old,
-        pokemonList: responsePokemonsData
+        pokemonList: finalPokemonList
       }))
+      localStorage.setItem('pokemons1_20', JSON.stringify(finalPokemonList))
     } catch (error) {
+      //TODO: fazer tratamento de erro de internet e erro inesperado
       console.log(error.message)
     } finally {
       setState(old => ({ ...old, isLoading: false }))
@@ -56,7 +64,16 @@ const Pokedex: React.FC = () => {
   }, [state.search])
 
   useEffect(() => {
-    loadPokemons()
+    const pokemons1_20 = JSON.parse(localStorage.getItem('pokemons1_20'))
+    if (pokemons1_20) {
+      console.log('usando o localStorage')
+      setState(old => ({
+        ...old,
+        pokemonList: pokemons1_20
+      }))
+    } else {
+      loadPokemons()
+    }
   }, [])
 
   return (
