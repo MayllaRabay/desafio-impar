@@ -1,12 +1,13 @@
 .mainContainer {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   min-height: fit-content;
   .contentContainer {
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-height: fit-content;
     .searchContainer {
       display: flex;
       align-items: center;
@@ -33,6 +34,36 @@
       gap: 1.5rem;
       padding: 2rem;
       height: 100%;
+    }
+  }
+  footer {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 2rem;
+    width: 100%;
+    .previousPageButton,
+    .nextPageButton {
+      height: 2rem;
+      width: 2rem;
+      img {
+        height: 2rem;
+        width: 2rem;
+      }
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    .previousPageButton img {
+      rotate: (-90deg);
+    }
+    .nextPageButton img {
+      rotate: (90deg);
+    }
+    .emptyPageButton {
+      height: 2rem;
+      width: 2rem;
     }
   }
 }

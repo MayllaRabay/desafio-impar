@@ -9,6 +9,11 @@ export const pokedexState = atom({
     pokemonList: [],
 
     search: '',
-    searchList: []
+    searchList: [],
+
+    pageOffset: 0,
+    pageActive: 1,
+    havePreviousPage: false,
+    haveNextPage: true
   }
 })

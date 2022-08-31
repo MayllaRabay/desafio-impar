@@ -1,23 +1,32 @@
-import { BackgroundPokemon, ThumbHeader } from 'app/presentation/assets'
+import { Arrow, BackgroundPokemon, ThumbHeader } from 'app/presentation/assets'
 import { Header, InputSearch, Loading } from 'app/presentation/components'
 import React, { useEffect } from 'react'
 import { useRecoilState } from 'recoil'
 import { NoSearchResults, pokedexState, PokemonCard } from './components'
 import Styles from './pokedex-styles.module.scss'
 
+export enum LocalStorageKey {
+  PageOne = 0,
+  PageTwo = 20,
+  PageThree = 40
+}
+
 const Pokedex: React.FC = () => {
   const [state, setState] = useRecoilState(pokedexState)
 
-  const loadPokemons = async () => {
+  const loadPokemons = async (pageOffset: number) => {
     try {
       setState(old => ({ ...old, isLoading: true }))
-      const requestPokemons = await fetch('https://pokeapi.co/api/v2/pokemon?offset=0&limit=20', {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json'
+      const requestPokemons = await fetch(
+        `https://pokeapi.co/api/v2/pokemon?offset=${pageOffset}&limit=20`,
+        {
+          method: 'GET',
+          mode: 'cors',
+          headers: {
+            'Content-type': 'application/json'
+          }
         }
-      })
+      )
       const responsePokemons = await requestPokemons.json()
 
       const pokemons = []
@@ -39,14 +48,46 @@ const Pokedex: React.FC = () => {
       })
       setState(old => ({
         ...old,
-        pokemonList: finalPokemonList
+        pokemonList: finalPokemonList,
+        pageOffset
       }))
-      localStorage.setItem('pokemons1_20', JSON.stringify(finalPokemonList))
+      if (pageOffset <= 40) {
+        localStorage.setItem(`pokemons${pageOffset}`, JSON.stringify(finalPokemonList))
+      }
     } catch (error) {
       //TODO: fazer tratamento de erro de internet e erro inesperado
       console.log(error.message)
     } finally {
       setState(old => ({ ...old, isLoading: false }))
+    }
+  }
+
+  const handlePreviousPage = () => {
+    console.log('previousPageButton')
+    setState(old => ({ ...old, pageActive: state.pageActive - 1 }))
+    handleCheckLocalStoragePokemons(state.pageOffset - 20)
+  }
+
+  const handleNextPage = () => {
+    console.log('nextPageButton')
+    setState(old => ({ ...old, pageActive: state.pageActive + 1 }))
+    handleCheckLocalStoragePokemons(state.pageOffset + 20)
+  }
+
+  const handleCheckLocalStoragePokemons = (pageOffset: number) => {
+    if (pageOffset > 40) return loadPokemons(pageOffset)
+
+    const pokemons = JSON.parse(localStorage.getItem(`pokemons${pageOffset}`))
+    if (pokemons) {
+      console.log('usando o localStorage')
+      setState(old => ({
+        ...old,
+        pokemonList: pokemons,
+        pageOffset
+      }))
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else {
+      loadPokemons(pageOffset)
     }
   }
 
@@ -64,16 +105,9 @@ const Pokedex: React.FC = () => {
   }, [state.search])
 
   useEffect(() => {
-    const pokemons1_20 = JSON.parse(localStorage.getItem('pokemons1_20'))
-    if (pokemons1_20) {
-      console.log('usando o localStorage')
-      setState(old => ({
-        ...old,
-        pokemonList: pokemons1_20
-      }))
-    } else {
-      loadPokemons()
-    }
+    setState(old => ({ ...old, pageActive: 1 }))
+    handleCheckLocalStoragePokemons(0)
+    // localStorage.clear()
   }, [])
 
   return (
@@ -111,6 +145,28 @@ const Pokedex: React.FC = () => {
           )}
         </div>
       </div>
+      {(!state.haveNextPage && !state.havePreviousPage) ||
+      (state.searchList.length > 0 && state.searchList.length <= 20) ||
+      (state.search && state.searchList.length === 0) ||
+      state.isLoading ? null : (
+        <footer>
+          {state.pageActive > 1 ? (
+            <div className={Styles.previousPageButton} onClick={handlePreviousPage}>
+              <img src={Arrow} alt="" />
+            </div>
+          ) : (
+            <div className={Styles.emptyPageButton} />
+          )}
+          <h4>{state.pageActive}</h4>
+          {state.haveNextPage ? (
+            <div className={Styles.nextPageButton} onClick={handleNextPage}>
+              <img src={Arrow} alt="" />
+            </div>
+          ) : (
+            <div className={Styles.emptyPageButton} />
+          )}
+        </footer>
+      )}
     </div>
   )
 }
