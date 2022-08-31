@@ -1,3 +1,5 @@
+@import 'app/presentation/styles/colors.module.scss';
+
 .mainContainer {
   display: flex;
   flex-direction: column;
@@ -27,43 +29,88 @@
         z-index: -1;
       }
     }
-    .cardWrapper {
+    .cardContainer {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 1.5rem;
       padding: 2rem;
       height: 100%;
+      .cardWrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem;
+        height: 100%;
+        max-width: 66.5rem;
+      }
     }
   }
   footer {
     display: flex;
     gap: 1rem;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding-bottom: 2rem;
     width: 100%;
-    .previousPageButton,
-    .nextPageButton {
-      height: 2rem;
-      width: 2rem;
-      img {
+    .footerMainButtons {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      .previousPageButton,
+      .nextPageButton {
+        height: 2rem;
+        width: 2rem;
+        img {
+          height: 2rem;
+          width: 2rem;
+        }
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      .previousPageButton img {
+        rotate: (-90deg);
+      }
+      .nextPageButton img {
+        rotate: (90deg);
+      }
+      .emptyPageButton {
         height: 2rem;
         width: 2rem;
       }
-      &:hover {
-        cursor: pointer;
+      .allPageButtons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        span {
+          border-right: 1px solid $grayD;
+          padding-right: 0.5rem;
+          &[data-style='pageActive'] {
+            color: $redD;
+            font-weight: bold;
+          }
+          &:last-child {
+            border-right: none;
+            padding-right: 0;
+          }
+          &:hover {
+            color: $redM;
+            cursor: pointer;
+          }
+        }
       }
     }
-    .previousPageButton img {
-      rotate: (-90deg);
-    }
-    .nextPageButton img {
-      rotate: (90deg);
-    }
-    .emptyPageButton {
-      height: 2rem;
-      width: 2rem;
+    .backToPageOneButton {
+      font-size: 0.8rem;
+      &:hover {
+        color: $redM;
+        cursor: pointer;
+      }
     }
   }
 }

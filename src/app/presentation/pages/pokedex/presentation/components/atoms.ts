@@ -14,6 +14,7 @@ export const pokedexState = atom({
     pageOffset: 0,
     pageActive: 1,
     havePreviousPage: false,
-    haveNextPage: true
+    haveNextPage: true,
+    pages: [1, 2, 3, 4, 5]
   }
 })

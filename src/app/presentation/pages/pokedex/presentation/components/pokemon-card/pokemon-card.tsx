@@ -14,9 +14,9 @@ const PokemonCard: React.FC<Props> = ({ pokemon }) => {
       <div className={Styles.cardImage}>
         <img src={pokemon?.sprite} alt={`Imagem de ${pokemon?.name}`} />
       </div>
-      <h4 className={Styles.cardTitle}>
+      <h5 className={Styles.cardTitle}>
         {pokemon?.name[0]?.toUpperCase() + pokemon?.name?.slice(1).toLowerCase()}
-      </h4>
+      </h5>
       <div className={Styles.cardInfo}>
         {pokemon?.types?.map((type, index) => {
           return <PokemonType key={index} type={type?.type} />
