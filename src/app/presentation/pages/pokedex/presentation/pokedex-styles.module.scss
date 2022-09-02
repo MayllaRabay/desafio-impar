@@ -108,10 +108,12 @@
       }
     }
     .backToPageOneButton {
-      font-size: 0.8rem;
-      &:hover {
-        color: $redM;
-        cursor: pointer;
+      p {
+        font-size: 0.8rem;
+        &:hover {
+          color: $redM;
+          cursor: pointer;
+        }
       }
     }
   }

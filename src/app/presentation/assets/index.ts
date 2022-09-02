@@ -1,8 +1,9 @@
-export { default as IconClose } from './icons/close'
-export { default as IconSearch } from './icons/search'
-export { default as Arrow } from './images/arrow.png'
-export { default as BackgroundPokemon } from './images/backgroundPokemon.jpg'
-export { default as IconPokeball } from './images/pokeball.png'
-export { default as IconStar } from './images/star.png'
-export { default as ThumbHeader } from './images/thumbHeader.png'
-export { default as ThumbSnorlax } from './images/thumbSnorlax.png'
+export { default as IconClose } from "./icons/close"
+export { default as IconSearch } from "./icons/search"
+export { default as Arrow } from "./images/arrow.png"
+export { default as BackgroundPokemon } from "./images/backgroundPokemon.jpg"
+export { default as IconPokeball } from "./images/pokeball.png"
+export { default as IconStar } from "./images/star.png"
+export { default as ThumbDitto } from "./images/thumbDitto.png"
+export { default as ThumbHeader } from "./images/thumbHeader.png"
+export { default as ThumbSnorlax } from "./images/thumbSnorlax.png"

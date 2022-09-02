@@ -20,6 +20,9 @@ const Pokedex: React.FC = () => {
       )
       const responsePokemons = await requestPokemons.json()
 
+      const lastPage = Math.ceil(responsePokemons.count / 20)
+      setState(old => ({ ...old, lastPage }))
+
       const pokemons = []
       responsePokemons.results.forEach(pkmon => {
         pokemons.push(pkmon.url)
@@ -141,6 +144,50 @@ const Pokedex: React.FC = () => {
     handleCheckLocalStoragePokemons(pageNumber * 20 - 20)
   }
 
+  const updatePageNavigation = () => {
+    if (state.pageActive < 5) {
+      return setState(old => ({
+        ...old,
+        pages: [1, 2, 3, 4, 5],
+        isLastPages: false,
+        haveNextPage: true
+      }))
+    }
+    if (state.pageActive === state.lastPage) {
+      return setState(old => ({
+        ...old,
+        pages: [
+          state.lastPage - 4,
+          state.lastPage - 3,
+          state.lastPage - 2,
+          state.lastPage - 1,
+          state.lastPage
+        ],
+        haveNextPage: false
+      }))
+    }
+    if (state.pageActive >= state.lastPage - 3) {
+      return setState(old => ({
+        ...old,
+        pages: [
+          state.lastPage - 4,
+          state.lastPage - 3,
+          state.lastPage - 2,
+          state.lastPage - 1,
+          state.lastPage
+        ],
+        isLastPages: true
+      }))
+    }
+    const page = state.pageActive
+    setState(old => ({
+      ...old,
+      pages: [page - 3, page - 2, page - 1, page, page + 1, page + 2, page + 3],
+      isLastPages: false,
+      haveNextPage: true
+    }))
+  }
+
   const handleCheckLocalStoragePokemons = (pageOffset: number) => {
     if (pageOffset > 40) return loadPokemons(pageOffset)
 
@@ -169,19 +216,13 @@ const Pokedex: React.FC = () => {
   }, [state.search])
 
   useEffect(() => {
-    if (state.pageActive < 5) {
-      return setState(old => ({ ...old, pages: [1, 2, 3, 4, 5] }))
-    }
-    const page = state.pageActive
-    setState(old => ({
-      ...old,
-      pages: [page - 3, page - 2, page - 1, page, page + 1, page + 2, page + 3]
-    }))
+    updatePageNavigation()
   }, [state.pageActive])
 
   useEffect(() => {
     resetState()
-    handleCheckLocalStoragePokemons(0)
+    updatePageNavigation()
+    handleCheckLocalStoragePokemons(state.pageActive * 20 - 20)
     // localStorage.clear()
   }, [])
 
@@ -219,8 +260,7 @@ const Pokedex: React.FC = () => {
           </div>
         </div>
       </div>
-      {(!state.haveNextPage && !state.havePreviousPage) ||
-      (state.searchList.length > 0 && state.searchList.length <= 20) ||
+      {(state.searchList.length > 0 && state.searchList.length <= 20) ||
       (state.search && state.searchList.length === 0) ||
       state.isLoading ? null : (
         <footer>
@@ -246,7 +286,7 @@ const Pokedex: React.FC = () => {
                   </span>
                 )
               })}
-              {state.haveNextPage && "..."}
+              {state.haveNextPage && !state.isLastPages && "..."}
             </div>
             {state.haveNextPage ? (
               <div className={Styles.nextPageButton} onClick={handleNextPage}>
@@ -258,7 +298,7 @@ const Pokedex: React.FC = () => {
           </div>
           {state.pageActive >= 5 && (
             <div onClick={() => handleSelectPage(1)} className={Styles.backToPageOneButton}>
-              Voltar à página 1
+              <p>Voltar à página 1</p>
             </div>
           )}
         </footer>
