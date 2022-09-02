@@ -33,7 +33,10 @@ const Pokedex: React.FC = () => {
         finalPokemonList.push({
           id: pkmon.id,
           name: pkmon.name,
-          sprite: pkmon.sprites.other.dream_world.front_default,
+          sprite:
+            pkmon.sprites.other.dream_world.front_default ??
+            pkmon.sprites.other["official-artwork"].front_default ??
+            pkmon.sprites.other.home.front_default,
           types: pkmon.types
         })
       })
@@ -160,7 +163,7 @@ const Pokedex: React.FC = () => {
 
   useEffect(() => {
     if (state.search === "") return setState(old => ({ ...old, searchList: [] }))
-    if (state.search.length <= 3) return
+    if (state.search.length < 3) return
     setState(old => ({ ...old, isLoading: true, searchList: [] }))
     handleSearchWithDebounce(state.search)
   }, [state.search])
@@ -201,13 +204,9 @@ const Pokedex: React.FC = () => {
           {state.search && state.searchList.length > 0 && <h4>Resultado da busca</h4>}
           <div className={Styles.cardWrapper}>
             {state.isLoading ? (
-              <>
-                <Loading />
-              </>
-            ) : state.search.length > 3 && state.searchList.length === 0 ? (
-              <>
-                <NoSearchResults />
-              </>
+              <Loading />
+            ) : state.search.length >= 3 && state.searchList.length === 0 ? (
+              <NoSearchResults />
             ) : state.search && state.searchList.length > 0 ? (
               state.searchList.map(pokemon => {
                 return <PokemonCard key={pokemon?.id} pokemon={pokemon} />
