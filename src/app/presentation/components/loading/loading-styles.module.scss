@@ -1,14 +1,12 @@
-@import 'app/presentation/styles/colors.module.scss';
+@import "app/presentation/styles/colors.module.scss";
 
 .loadingContainer {
-  color: $grayD;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   position: relative;
-  height: 50vh;
   img {
     display: flex;
     height: 2.5rem;

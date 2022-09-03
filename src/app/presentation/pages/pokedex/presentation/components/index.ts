@@ -1,5 +1,4 @@
-export * from './atoms'
-export { default as NoSearchResults } from './no-search-results/no-search-results'
-export * from './pokedex-data'
-export { default as PokemonCard } from './pokemon-card/pokemon-card'
-export { default as PokemonType } from './pokemon-type/pokemon-type'
+export * from "./atoms"
+export * from "./pokedex-data"
+export { default as PokemonCard } from "./pokemon-card/pokemon-card"
+export { default as PokemonType } from "./pokemon-type/pokemon-type"

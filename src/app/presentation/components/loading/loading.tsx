@@ -1,12 +1,19 @@
-import { IconPokeball } from 'app/presentation/assets'
-import React from 'react'
-import Styles from './loading-styles.module.scss'
+import { IconPokeball } from "app/presentation/assets"
+import { Colors } from "app/presentation/styles"
+import React from "react"
+import Styles from "./loading-styles.module.scss"
 
-const Loading: React.FC = () => {
+export interface Props {
+  color?: string
+  height?: string
+  width?: string
+}
+
+const Loading: React.FC<Props> = ({ color = Colors.grayD, height = "100%", width = "100%" }) => {
   return (
-    <div className={Styles.loadingContainer}>
+    <div style={{ height: height, width: width }} className={Styles.loadingContainer}>
       <img src={IconPokeball} alt="" />
-      <h4>Carregando</h4>
+      <h4 style={{ color: color }}>Carregando</h4>
     </div>
   )
 }

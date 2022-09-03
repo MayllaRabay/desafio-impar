@@ -1,13 +1,17 @@
 import { PokeApiBaseUrl, PokeApiConfig } from "app/domain/usecases"
 import { Arrow, BackgroundPokemon, ThumbHeader } from "app/presentation/assets"
-import { Header, InputSearch, Loading } from "app/presentation/components"
+import { Header, InputSearch, Loading, NoSearchResults } from "app/presentation/components"
 import debounce from "lodash.debounce"
 import React, { useEffect, useMemo } from "react"
 import { useRecoilState, useResetRecoilState } from "recoil"
-import { NoSearchResults, pokedexState, PokemonCard } from "./components"
+import { pokedexState, PokemonCard } from "./components"
 import Styles from "./pokedex-styles.module.scss"
 
-const Pokedex: React.FC = () => {
+export interface Props {
+  paramsPage?: number
+}
+
+const Pokedex: React.FC<Props> = ({ paramsPage }) => {
   const [state, setState] = useRecoilState(pokedexState)
   const resetState = useResetRecoilState(pokedexState)
 
@@ -19,10 +23,6 @@ const Pokedex: React.FC = () => {
         PokeApiConfig
       )
       const responsePokemons = await requestPokemons.json()
-
-      const lastPage = Math.ceil(responsePokemons.count / 20)
-      setState(old => ({ ...old, lastPage }))
-
       const pokemons = []
       responsePokemons.results.forEach(pkmon => {
         pokemons.push(pkmon.url)
@@ -65,11 +65,8 @@ const Pokedex: React.FC = () => {
       setState(old => ({ ...old, isLoading: true, searchList: [] }))
       let pokemons
       if (!state.allPokemons) {
-        const request = await fetch(`${PokeApiBaseUrl}pokemon/?offset=0&limit=1`, PokeApiConfig)
-        const response = await request.json()
-        const pokemonCount: number = response.count
         const requestSearchedPokemons = await fetch(
-          `${PokeApiBaseUrl}pokemon/?offset=0&limit=${pokemonCount}`,
+          `${PokeApiBaseUrl}pokemon/?offset=0&limit=${state.pokemonCount}`,
           PokeApiConfig
         )
         pokemons = await requestSearchedPokemons.json()
@@ -144,8 +141,8 @@ const Pokedex: React.FC = () => {
     handleCheckLocalStoragePokemons(pageNumber * 20 - 20)
   }
 
-  const updatePageNavigation = () => {
-    if (state.pageActive < 5) {
+  const updatePageNavigation = (pageActive: number) => {
+    if (pageActive < 5) {
       return setState(old => ({
         ...old,
         pages: [1, 2, 3, 4, 5],
@@ -153,7 +150,7 @@ const Pokedex: React.FC = () => {
         haveNextPage: true
       }))
     }
-    if (state.pageActive === state.lastPage) {
+    if (pageActive === state.lastPage) {
       return setState(old => ({
         ...old,
         pages: [
@@ -166,7 +163,7 @@ const Pokedex: React.FC = () => {
         haveNextPage: false
       }))
     }
-    if (state.pageActive >= state.lastPage - 3) {
+    if (pageActive >= state.lastPage - 3) {
       return setState(old => ({
         ...old,
         pages: [
@@ -179,7 +176,7 @@ const Pokedex: React.FC = () => {
         isLastPages: true
       }))
     }
-    const page = state.pageActive
+    const page = pageActive
     setState(old => ({
       ...old,
       pages: [page - 3, page - 2, page - 1, page, page + 1, page + 2, page + 3],
@@ -208,6 +205,37 @@ const Pokedex: React.FC = () => {
     return debounce((search: string) => handleSearchPokemons(search), 1000)
   }, [])
 
+  const getInitialStates = async () => {
+    try {
+      setState(old => ({ ...old, loading: true }))
+      const request = await fetch(`${PokeApiBaseUrl}pokemon/?offset=0&limit=1`, PokeApiConfig)
+      const response = await request.json()
+      const pokemonCount = response.count
+      const lastPage = Math.ceil(pokemonCount / 20)
+      setState(old => ({ ...old, pokemonCount, lastPage }))
+
+      let page: number
+      if (paramsPage) {
+        if (paramsPage > lastPage) {
+          page = lastPage
+          setState(old => ({ ...old, pageActive: lastPage }))
+        } else {
+          page = paramsPage
+          setState(old => ({ ...old, pageActive: paramsPage }))
+        }
+      } else {
+        page = state.pageActive
+      }
+      updatePageNavigation(page)
+      handleCheckLocalStoragePokemons(page * 20 - 20)
+    } catch (error) {
+      //TODO: fazer tratamento de erro de internet e erro inesperado
+      console.log(error.message)
+    } finally {
+      setState(old => ({ ...old, loading: false }))
+    }
+  }
+
   useEffect(() => {
     if (state.search === "") return setState(old => ({ ...old, searchList: [] }))
     if (state.search.length < 3) return
@@ -216,13 +244,12 @@ const Pokedex: React.FC = () => {
   }, [state.search])
 
   useEffect(() => {
-    updatePageNavigation()
+    updatePageNavigation(state.pageActive)
   }, [state.pageActive])
 
   useEffect(() => {
     resetState()
-    updatePageNavigation()
-    handleCheckLocalStoragePokemons(state.pageActive * 20 - 20)
+    getInitialStates()
     // localStorage.clear()
   }, [])
 
@@ -245,9 +272,9 @@ const Pokedex: React.FC = () => {
           {state.search && state.searchList.length > 0 && <h4>Resultado da busca</h4>}
           <div className={Styles.cardWrapper}>
             {state.isLoading ? (
-              <Loading />
+              <Loading height="60vh" />
             ) : state.search.length >= 3 && state.searchList.length === 0 ? (
-              <NoSearchResults />
+              <NoSearchResults height="60vh" />
             ) : state.search && state.searchList.length > 0 ? (
               state.searchList.map(pokemon => {
                 return <PokemonCard key={pokemon?.id} pokemon={pokemon} />
