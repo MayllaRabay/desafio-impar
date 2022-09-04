@@ -81,7 +81,7 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
         pageOffset
       }))
       if (pageOffset <= 40) {
-        localStorage.setItem(`pokemons${pageOffset}`, JSON.stringify(finalPokemonList))
+        sessionStorage.setItem(`pokemons${pageOffset}`, JSON.stringify(pokemonList))
       }
     } catch (error) {
       //TODO: fazer tratamento de erro de internet e erro inesperado
@@ -198,7 +198,7 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
   const handleCheckLocalStoragePokemons = (pageOffset: number) => {
     if (pageOffset > 40) return loadPokemons(pageOffset)
 
-    const pokemons = JSON.parse(localStorage.getItem(`pokemons${pageOffset}`))
+    const pokemons = JSON.parse(sessionStorage.getItem(`pokemons${pageOffset}`))
     if (pokemons) {
       setState(old => ({
         ...old,
@@ -266,6 +266,7 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
     resetState()
     getInitialStates()
     // localStorage.clear()
+    // sessionStorage.clear()
   }, [])
 
   return (
