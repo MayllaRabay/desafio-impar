@@ -1,3 +1,4 @@
+import { PokemonModel } from "app/domain/models"
 import { PokeApiBaseUrl, PokeApiConfig } from "app/domain/usecases"
 import { Arrow, BackgroundPokemon, ThumbHeader } from "app/presentation/assets"
 import { Header, InputSearch, Loading, NoSearchResults } from "app/presentation/components"
@@ -7,13 +8,56 @@ import { useRecoilState, useResetRecoilState } from "recoil"
 import { pokedexState, PokemonCard } from "./components"
 import Styles from "./pokedex-styles.module.scss"
 
-export interface Props {
+interface Props {
   paramsPage?: number
 }
 
 const Pokedex: React.FC<Props> = ({ paramsPage }) => {
   const [state, setState] = useRecoilState(pokedexState)
   const resetState = useResetRecoilState(pokedexState)
+
+  const finalPokemonList = (pokemonList): Array<PokemonModel> => {
+    const finalPokemonList = []
+    pokemonList.forEach(pkmon => {
+      const types = []
+      pkmon.types.forEach(type => {
+        types.push({
+          name: type.type.name,
+          url: type.type.url
+        })
+      })
+      const stats = []
+      pkmon.stats.forEach(stat => {
+        stats.push({
+          name: stat.stat.name,
+          value: stat.base_stat,
+          EV: stat.effort
+        })
+      })
+      const abilities = []
+      pkmon.abilities.forEach(ability => {
+        abilities.push({
+          name: ability.ability.name,
+          url: ability.ability.url,
+          is_hidden: ability.is_hidden
+        })
+      })
+      finalPokemonList.push({
+        id: pkmon.id,
+        name: pkmon.name,
+        sprite:
+          pkmon.sprites.other.dream_world.front_default ??
+          pkmon.sprites.other["official-artwork"].front_default ??
+          pkmon.sprites.other.home.front_default,
+        types,
+        abilities,
+        stats,
+        height: pkmon.height / 10,
+        weight: pkmon.weight / 10
+      })
+    })
+    return finalPokemonList
+  }
 
   const loadPokemons = async (pageOffset: number) => {
     try {
@@ -30,22 +74,10 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
 
       const requestPokemonsData = await Promise.all(pokemons.map(pkmon => fetch(pkmon)))
       const responsePokemonsData = await Promise.all(requestPokemonsData.map(pkmon => pkmon.json()))
-
-      const finalPokemonList = []
-      responsePokemonsData.forEach(pkmon => {
-        finalPokemonList.push({
-          id: pkmon.id,
-          name: pkmon.name,
-          sprite:
-            pkmon.sprites.other.dream_world.front_default ??
-            pkmon.sprites.other["official-artwork"].front_default ??
-            pkmon.sprites.other.home.front_default,
-          types: pkmon.types
-        })
-      })
+      const pokemonList = finalPokemonList(responsePokemonsData)
       setState(old => ({
         ...old,
-        pokemonList: finalPokemonList,
+        pokemonList,
         pageOffset
       }))
       if (pageOffset <= 40) {
@@ -63,20 +95,8 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
   const handleSearchPokemons = async (search: string) => {
     try {
       setState(old => ({ ...old, isLoading: true, searchList: [] }))
-      let pokemons
-      if (!state.allPokemons) {
-        const requestSearchedPokemons = await fetch(
-          `${PokeApiBaseUrl}pokemon/?offset=0&limit=${state.pokemonCount}`,
-          PokeApiConfig
-        )
-        pokemons = await requestSearchedPokemons.json()
-        setState(old => ({ ...old, allPokemons: pokemons }))
-      } else {
-        pokemons = state.allPokemons
-      }
-
       const searchedPokemons = []
-      pokemons.results.forEach(pkmon => {
+      state.allPokemons.results.forEach(pkmon => {
         if (pkmon.name?.toLowerCase().includes(search?.toLowerCase())) {
           searchedPokemons.push(pkmon.url)
         }
@@ -89,21 +109,10 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
         const responsePokemonsData = await Promise.all(
           requestPokemonsData.map(pkmon => pkmon.json())
         )
-        const finalPokemonList = []
-        responsePokemonsData.forEach(pkmon => {
-          finalPokemonList.push({
-            id: pkmon.id,
-            name: pkmon.name,
-            sprite:
-              pkmon.sprites.other.dream_world.front_default ??
-              pkmon.sprites.other["official-artwork"].front_default ??
-              pkmon.sprites.other.home.front_default,
-            types: pkmon.types
-          })
-        })
+        const searchList = finalPokemonList(responsePokemonsData)
         setState(old => ({
           ...old,
-          searchList: finalPokemonList
+          searchList
         }))
       }
     } catch (error) {
@@ -133,6 +142,7 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
   }
 
   const handleSelectPage = (pageNumber: number) => {
+    if (pageNumber === state.pageActive) return
     setState(old => ({
       ...old,
       pageActive: pageNumber,
@@ -212,7 +222,12 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
       const response = await request.json()
       const pokemonCount = response.count
       const lastPage = Math.ceil(pokemonCount / 20)
-      setState(old => ({ ...old, pokemonCount, lastPage }))
+      const requestAllPokemons = await fetch(
+        `${PokeApiBaseUrl}pokemon/?offset=0&limit=${pokemonCount}`,
+        PokeApiConfig
+      )
+      const allPokemons = await requestAllPokemons.json()
+      setState(old => ({ ...old, pokemonCount, lastPage, allPokemons }))
 
       let page: number
       if (paramsPage) {
@@ -277,11 +292,25 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
               <NoSearchResults height="60vh" />
             ) : state.search && state.searchList.length > 0 ? (
               state.searchList.map(pokemon => {
-                return <PokemonCard key={pokemon?.id} pokemon={pokemon} />
+                return (
+                  <PokemonCard
+                    key={pokemon?.id}
+                    pokemon={pokemon}
+                    state={state}
+                    setState={setState}
+                  />
+                )
               })
             ) : (
               state.pokemonList.map(pokemon => {
-                return <PokemonCard key={pokemon?.id} pokemon={pokemon} />
+                return (
+                  <PokemonCard
+                    key={pokemon?.id}
+                    pokemon={pokemon}
+                    state={state}
+                    setState={setState}
+                  />
+                )
               })
             )}
           </div>
@@ -300,7 +329,7 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
               <div className={Styles.emptyPageButton} />
             )}
             <div className={Styles.allPageButtons}>
-              {state.pages[0] !== 1 && "..."}
+              {state.pages[0] !== 1 && <span>...</span>}
               {state.pages?.map(page => {
                 return (
                   <span
@@ -313,7 +342,7 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
                   </span>
                 )
               })}
-              {state.haveNextPage && !state.isLastPages && "..."}
+              {state.haveNextPage && !state.isLastPages && <span>...</span>}
             </div>
             {state.haveNextPage ? (
               <div className={Styles.nextPageButton} onClick={handleNextPage}>

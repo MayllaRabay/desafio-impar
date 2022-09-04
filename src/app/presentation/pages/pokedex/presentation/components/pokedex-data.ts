@@ -1,56 +1,54 @@
-import { PokemonModel } from 'app/domain/models'
-
-export const pokemonListMock: Array<PokemonModel> = [
+export const pokemonListMock = [
   {
     id: 1,
-    name: 'bulbasaur',
+    name: "bulbasaur",
     sprite:
-      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
+      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
     types: [
       {
         type: {
-          name: 'grass'
+          name: "grass"
         }
       },
       {
         type: {
-          name: 'poison'
+          name: "poison"
         }
       }
     ]
   },
   {
     id: 2,
-    name: 'ivysaur',
+    name: "ivysaur",
     sprite:
-      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png',
+      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png",
     types: [
       {
         type: {
-          name: 'grass'
+          name: "grass"
         }
       },
       {
         type: {
-          name: 'poison'
+          name: "poison"
         }
       }
     ]
   },
   {
     id: 3,
-    name: 'venusaur',
+    name: "venusaur",
     sprite:
-      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png',
+      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png",
     types: [
       {
         type: {
-          name: 'grass'
+          name: "grass"
         }
       },
       {
         type: {
-          name: 'poison'
+          name: "poison"
         }
       }
     ]

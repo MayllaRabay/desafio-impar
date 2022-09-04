@@ -17,6 +17,10 @@
   width: 12rem;
   &:hover {
     border-color: $grayM;
+    cursor: pointer;
+    .cardTitle {
+      border-color: $grayM;
+    }
     .cardId {
       color: $grayM;
     }
@@ -66,6 +70,7 @@
   .cardTitle {
     border-top: 1px solid $grayL;
     padding-top: 0.25rem;
+    transition: all 0.5s;
     width: 100%;
   }
   .cardInfo {

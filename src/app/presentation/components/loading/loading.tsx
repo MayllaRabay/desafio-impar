@@ -3,7 +3,7 @@ import { Colors } from "app/presentation/styles"
 import React from "react"
 import Styles from "./loading-styles.module.scss"
 
-export interface Props {
+interface Props {
   color?: string
   height?: string
   width?: string

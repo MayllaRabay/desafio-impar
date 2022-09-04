@@ -2,7 +2,7 @@ import { ThumbSnorlax } from "app/presentation/assets"
 import React from "react"
 import Styles from "./no-search-results-styles.module.scss"
 
-export interface Props {
+interface Props {
   height?: string
 }
 

@@ -1,7 +1,7 @@
-import React from 'react'
-import Styles from './header-styles.module.scss'
+import React from "react"
+import Styles from "./header-styles.module.scss"
 
-export interface Props {
+interface Props {
   title?: string
   icon?: string
 }

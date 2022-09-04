@@ -1,30 +1,30 @@
-import { Colors } from 'app/presentation/styles'
-import React from 'react'
-import Styles from './pokemon-type-styles.module.scss'
+import { Colors } from "app/presentation/styles"
+import React from "react"
+import Styles from "./pokemon-type-styles.module.scss"
 
 export enum PokemonTypeName {
-  Normal = 'normal',
-  Fighting = 'fighting',
-  Flying = 'flying',
-  Poison = 'poison',
-  Ground = 'ground',
-  Rock = 'rock',
-  Bug = 'bug',
-  Ghost = 'ghost',
-  Steel = 'steel',
-  Fire = 'fire',
-  Water = 'water',
-  Grass = 'grass',
-  Electric = 'electric',
-  Psychic = 'psychic',
-  Ice = 'ice',
-  Dragon = 'dragon',
-  Dark = 'dark',
-  Fairy = 'fairy',
-  Shadow = 'shadow'
+  Normal = "normal",
+  Fighting = "fighting",
+  Flying = "flying",
+  Poison = "poison",
+  Ground = "ground",
+  Rock = "rock",
+  Bug = "bug",
+  Ghost = "ghost",
+  Steel = "steel",
+  Fire = "fire",
+  Water = "water",
+  Grass = "grass",
+  Electric = "electric",
+  Psychic = "psychic",
+  Ice = "ice",
+  Dragon = "dragon",
+  Dark = "dark",
+  Fairy = "fairy",
+  Shadow = "shadow"
 }
 
-export interface Props {
+interface Props {
   type: any
 }
 

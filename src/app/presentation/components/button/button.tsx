@@ -1,7 +1,7 @@
 import React from "react"
 import Styles from "./button-styles.module.scss"
 
-export interface Props {
+interface Props {
   text: string
   onClick: () => void
   mainButton?: boolean

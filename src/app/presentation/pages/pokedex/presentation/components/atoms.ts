@@ -5,6 +5,7 @@ export const pokedexState = atom({
   default: {
     mainError: undefined,
     isLoading: false,
+    isModalPokemonInfoOpen: false,
 
     allPokemons: undefined,
     pokemonList: [],

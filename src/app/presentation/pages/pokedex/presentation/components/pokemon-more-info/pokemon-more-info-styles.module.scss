@@ -1,0 +1,64 @@
+@import "app/presentation/styles/colors.module.scss";
+@import "app/presentation/styles/global-styles.module.scss";
+
+h4 {
+  margin-bottom: 0.25rem;
+}
+
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  row-gap: 1rem;
+  width: 100%;
+  .statsContainer {
+    border-bottom: 1px solid $grayL;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    column-gap: 1rem;
+    padding-bottom: 0.5rem;
+    width: 100%;
+    .spriteContainer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      column-gap: 0.5rem;
+      .spriteWrapper {
+        border-right: 1px solid $grayL;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        row-gap: 0.5rem;
+        img {
+          object-fit: contain;
+          max-height: 16rem;
+          max-width: 16rem;
+          padding-right: 0.5rem;
+        }
+      }
+    }
+  }
+  .abilitiesContainer {
+    display: flex;
+    align-self: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: $md) {
+  .mainContainer {
+    overflow-y: auto;
+    max-height: 90vh;
+    .statsContainer {
+      flex-direction: column;
+      column-gap: 1rem;
+      .statsWrapper {
+        align-self: flex-start;
+      }
+    }
+  }
+}
