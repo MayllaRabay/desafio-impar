@@ -11,9 +11,17 @@ type Props = React.DetailedHTMLProps<
   setState: any
   placeholder?: string
   width?: string
+  handleSearch?: () => void
 }
 
-const InputSearch: React.FC<Props> = ({ state, setState, placeholder, width, ...props }: Props) => {
+const InputSearch: React.FC<Props> = ({
+  state,
+  setState,
+  placeholder,
+  width,
+  handleSearch,
+  ...props
+}: Props) => {
   const inputRef = useRef<HTMLInputElement>()
 
   const handleOnFocus = (e: any): void => {
@@ -34,6 +42,10 @@ const InputSearch: React.FC<Props> = ({ state, setState, placeholder, width, ...
     })
   }
 
+  const handleOnKeyUp = async () => {
+    handleSearch()
+  }
+
   return (
     <div className={Styles.inputContainer} style={{ width }}>
       <input
@@ -43,7 +55,7 @@ const InputSearch: React.FC<Props> = ({ state, setState, placeholder, width, ...
         placeholder={placeholder}
         onFocus={e => handleOnFocus(e)}
         onChange={e => handleOnChange(e)}
-        onKeyUp={e => handleOnChange(e)}
+        onKeyUp={handleOnKeyUp}
         autoComplete="off"
       />
       <span onClick={handleClearSelection} className={Styles.inputIcon}>

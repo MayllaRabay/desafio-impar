@@ -85,41 +85,10 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
       }
     } catch (error) {
       //TODO: fazer tratamento de erro de internet e erro inesperado
-      console.log(error.message)
+      console.error("loadPokemons ERROR: ", error.message)
     } finally {
       setState(old => ({ ...old, isLoading: false }))
       window.scrollTo({ top: 0, behavior: "smooth" })
-    }
-  }
-
-  const handleSearchPokemons = async (search: string) => {
-    try {
-      setState(old => ({ ...old, isLoading: true, searchList: [] }))
-      const searchedPokemons = []
-      state.allPokemons.results.forEach(pkmon => {
-        if (pkmon.name?.toLowerCase().includes(search?.toLowerCase())) {
-          searchedPokemons.push(pkmon.url)
-        }
-      })
-
-      if (searchedPokemons.length > 20) {
-        console.log("searchedPokemons muito grande: ", searchedPokemons)
-      } else {
-        const requestPokemonsData = await Promise.all(searchedPokemons.map(pkmon => fetch(pkmon)))
-        const responsePokemonsData = await Promise.all(
-          requestPokemonsData.map(pkmon => pkmon.json())
-        )
-        const searchList = finalPokemonList(responsePokemonsData)
-        setState(old => ({
-          ...old,
-          searchList
-        }))
-      }
-    } catch (error) {
-      //TODO: fazer tratamento de erro de internet e erro inesperado
-      console.log(error.message)
-    } finally {
-      setState(old => ({ ...old, isLoading: false }))
     }
   }
 
@@ -211,9 +180,44 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
     }
   }
 
+  const handleSearchPokemons = async (search: string, allPokemons: Array<any>) => {
+    try {
+      setState(old => ({ ...old, isLoading: true }))
+      const searchedPokemons = []
+      allPokemons.forEach(pkmon => {
+        if (pkmon.name?.toLowerCase().includes(search?.toLowerCase())) {
+          searchedPokemons.push(pkmon.url)
+        }
+      })
+      const requestPokemonsData = await Promise.all(searchedPokemons.map(pkmon => fetch(pkmon)))
+      const responsePokemonsData = await Promise.all(requestPokemonsData.map(pkmon => pkmon.json()))
+      const searchList = finalPokemonList(responsePokemonsData)
+      setState(old => ({
+        ...old,
+        searchList
+      }))
+    } catch (error) {
+      //TODO: fazer tratamento de erro de internet e erro inesperado
+      console.error("handleSearchPokemons ERROR: ", error.message)
+    } finally {
+      setState(old => ({ ...old, isLoading: false }))
+    }
+  }
+
   const handleSearchWithDebounce = useMemo(() => {
-    return debounce((search: string) => handleSearchPokemons(search), 1000)
+    return debounce(
+      (search: string, allPokemons: Array<any>) => handleSearchPokemons(search, allPokemons),
+      1000
+    )
   }, [])
+
+  const handleSearch = () => {
+    if (state.search === "" || state.search.length < 3) {
+      return setState(old => ({ ...old, searchList: [] }))
+    }
+    setState(old => ({ ...old, isLoading: true, searchList: [] }))
+    handleSearchWithDebounce(state.search, state.allPokemons)
+  }
 
   const getInitialStates = async () => {
     try {
@@ -226,36 +230,32 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
         `${PokeApiBaseUrl}pokemon/?offset=0&limit=${pokemonCount}`,
         PokeApiConfig
       )
-      const allPokemons = await requestAllPokemons.json()
-      setState(old => ({ ...old, pokemonCount, lastPage, allPokemons }))
-
-      let page: number
+      const responseAllPokemons = await requestAllPokemons.json()
+      const allPokemons = responseAllPokemons.results
+      let pageActive: number
       if (paramsPage) {
         if (paramsPage > lastPage) {
-          page = lastPage
-          setState(old => ({ ...old, pageActive: lastPage }))
+          pageActive = lastPage
         } else {
-          page = paramsPage
-          setState(old => ({ ...old, pageActive: paramsPage }))
+          pageActive = paramsPage
         }
       } else {
-        page = state.pageActive
+        pageActive = state.pageActive
       }
-      updatePageNavigation(page)
-      handleCheckLocalStoragePokemons(page * 20 - 20)
+      setState(old => ({ ...old, pokemonCount, lastPage, allPokemons, pageActive }))
+      updatePageNavigation(pageActive)
+      handleCheckLocalStoragePokemons(pageActive * 20 - 20)
     } catch (error) {
       //TODO: fazer tratamento de erro de internet e erro inesperado
-      console.log(error.message)
+      console.error("getInitialStates ERROR: ", error.message)
     } finally {
       setState(old => ({ ...old, loading: false }))
     }
   }
 
   useEffect(() => {
-    if (state.search === "") return setState(old => ({ ...old, searchList: [] }))
-    if (state.search.length < 3) return
-    setState(old => ({ ...old, isLoading: true, searchList: [] }))
-    handleSearchWithDebounce(state.search)
+    if (state.search === "" || state.search.length < 3)
+      return setState(old => ({ ...old, searchList: [] }))
   }, [state.search])
 
   useEffect(() => {
@@ -265,8 +265,6 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
   useEffect(() => {
     resetState()
     getInitialStates()
-    // localStorage.clear()
-    // sessionStorage.clear()
   }, [])
 
   return (
@@ -275,6 +273,7 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
       <div className={Styles.contentContainer}>
         <div className={Styles.searchContainer}>
           <InputSearch
+            handleSearch={handleSearch}
             name="search"
             type="text"
             state={state}
@@ -293,31 +292,18 @@ const Pokedex: React.FC<Props> = ({ paramsPage }) => {
               <NoSearchResults height="60vh" />
             ) : state.search && state.searchList.length > 0 ? (
               state.searchList.map(pokemon => {
-                return (
-                  <PokemonCard
-                    key={pokemon?.id}
-                    pokemon={pokemon}
-                    state={state}
-                    setState={setState}
-                  />
-                )
+                return <PokemonCard key={pokemon?.id} pokemon={pokemon} />
               })
             ) : (
               state.pokemonList.map(pokemon => {
-                return (
-                  <PokemonCard
-                    key={pokemon?.id}
-                    pokemon={pokemon}
-                    state={state}
-                    setState={setState}
-                  />
-                )
+                return <PokemonCard key={pokemon?.id} pokemon={pokemon} />
               })
             )}
           </div>
         </div>
       </div>
-      {(state.searchList.length > 0 && state.searchList.length <= 20) ||
+      {state.searchList.length > 0 ||
+      state.pokemonList.length === 0 ||
       (state.search && state.searchList.length === 0) ||
       state.isLoading ? null : (
         <footer>

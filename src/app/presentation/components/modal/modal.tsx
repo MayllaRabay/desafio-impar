@@ -5,7 +5,7 @@ interface Props {
   id?: string
   children: React.ReactNode
   isOpen: boolean
-  onClose: () => void
+  onClose: (e?: any) => void
   width?: string
 }
 

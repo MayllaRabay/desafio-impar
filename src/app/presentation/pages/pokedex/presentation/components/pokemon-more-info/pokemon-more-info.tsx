@@ -1,4 +1,5 @@
 import { PokemonModel } from "app/domain/models"
+import { ThumbDitto } from "app/presentation/assets"
 import React from "react"
 import Styles from "./pokemon-more-info-styles.module.scss"
 
@@ -13,7 +14,14 @@ const PokemonMoreInfo: React.FC<Props> = ({ pokemon }) => {
       <div className={Styles.statsContainer}>
         <div className={Styles.spriteContainer}>
           <div className={Styles.spriteWrapper}>
-            <img src={pokemon.sprite} alt="" />
+            {!pokemon?.sprite ? (
+              <div className={Styles.imageNotFound}>
+                <img src={ThumbDitto} alt={`Imagem de ${pokemon?.name} não encontrada`} />
+                <p>imagem não encontrada</p>
+              </div>
+            ) : (
+              <img src={pokemon?.sprite} alt={`Imagem de ${pokemon?.name}`} />
+            )}
             <span>{pokemon.weight}kg</span>
           </div>
           <span>{pokemon.height}m</span>

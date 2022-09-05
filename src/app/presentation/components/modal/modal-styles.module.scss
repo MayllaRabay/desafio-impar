@@ -43,7 +43,9 @@
       }
       &:hover {
         cursor: pointer;
-        color: $grayD;
+        > span {
+          color: $grayD;
+        }
       }
     }
   }

@@ -5,31 +5,28 @@ import {
   PokemonMoreInfo,
   PokemonType
 } from "app/presentation/pages/pokedex/presentation/components"
-import React from "react"
+import React, { useState } from "react"
 import Styles from "./pokemon-card-styles.module.scss"
 
 interface Props {
   pokemon: PokemonModel
-  state: any
-  setState: any
 }
 
-const PokemonCard: React.FC<Props> = ({ pokemon, state, setState }) => {
-  const modal = document.getElementById(pokemon?.name + pokemon?.id)
-  const handleModal = () => {
-    if (modal) {
-      if (modal?.style.display === "flex") {
-        modal.style.display = "none"
-        setState(old => ({ ...old, isModalPokemonInfoOpen: false }))
-      } else {
-        modal.style.display = "flex"
-        setState(old => ({ ...old, isModalPokemonInfoOpen: true }))
-      }
-    }
+const PokemonCard: React.FC<Props> = ({ pokemon }) => {
+  let modalDisplayStyle = document.getElementById(pokemon?.name + pokemon?.id)?.style.display
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const handleOpenModal = e => {
+    e.stopPropagation()
+    modalDisplayStyle = "flex"
+    setIsModalOpen(true)
+  }
+  const handleCloseModal = () => {
+    modalDisplayStyle = "none"
+    setIsModalOpen(false)
   }
   return (
     <>
-      <div onClick={handleModal} className={Styles.cardContainer}>
+      <div onClick={handleOpenModal} className={Styles.cardContainer}>
         <div className={Styles.cardId}>{`#${pokemon?.id}`}</div>
         <div className={Styles.cardImage}>
           {!pokemon?.sprite ? (
@@ -50,11 +47,7 @@ const PokemonCard: React.FC<Props> = ({ pokemon, state, setState }) => {
           })}
         </div>
       </div>
-      <Modal
-        id={pokemon?.name + pokemon?.id}
-        isOpen={modal?.style.display === "flex"}
-        onClose={handleModal}
-      >
+      <Modal id={pokemon?.name + pokemon?.id} isOpen={isModalOpen} onClose={handleCloseModal}>
         <PokemonMoreInfo pokemon={pokemon} />
       </Modal>
     </>
